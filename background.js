@@ -1,67 +1,87 @@
-lang1 = 'ja-JP'
-lang2 = 'en-US'
+lang1 = ['ja-JP', 'ja']
+lang2 = ['en-US', 'en']
 
 
 
 function check_url_redirect(details) {
     var pattern, redirectUrl;
-    
-    function redirect_if_match(query, target, details){
+
+    function redirect_if_match(query, target, details) {
         try {
-            pattern = new RegExp(query, 'ig');
-          } catch(err) {
+            pattern = new RegExp(['([^a-zA-Z0-9])', query, '([^a-zA-Z0-9])'].join(''), 'ig');
+        } catch (err) {
             //bad pattern
-            return 
-          }
-          match = details.url.match(pattern);
-          if (match) {
-            redirectUrl = details.url.replace(pattern, target);
+            return false
+        }
+        match = details.url.match(pattern);
+        if (match) {
+            redirectUrl = details.url.replace(pattern, ['$1', target, '$2'].join(''));
             if (redirectUrl != details.url) {
-              chrome.tabs.update(details.id, { url: redirectUrl });
+                chrome.tabs.update(details.id, { url: redirectUrl });
+                return true
             }
-          }
+        }
+        return false
     }
-    var r1 = redirect_if_match(lang1, lang2, details);
-    var r2 = redirect_if_match(lang2, lang1, details);
-  }
+    var matched = false;
+    lang1.forEach((l, ind) => {
+        if (matched) { return }
+        if (redirect_if_match(l, lang2[ind], details)) { matched = true }
+    });
+    lang2.forEach((l, ind) => {
+        if (matched) { return }
+        if (redirect_if_match(l, lang1[ind], details)) { matched = true }
+    });
+}
 
 chrome.action.onClicked.addListener(check_url_redirect);
 
 
-function update_extention_staus(details){
-    console.log(details)
-    function is_match(query, details){
+function update_extention_staus(details) {
+    function is_match(query, details) {
         try {
-            pattern = new RegExp(query, 'ig');
-          } catch(err) {
+            pattern = new RegExp(['([^a-zA-Z0-9])', query, '([^a-zA-Z0-9])'].join(''), 'ig');
+        } catch (err) {
             //bad pattern
             return false
-          }
-          match = details.url.match(pattern);
-          return match
+        }
+        match = details.url.match(pattern);
+        return match
     }
 
-    console.log(details.url)
     if (details.url == 'about:blank') { return }
-    if (is_match(lang1, details)){
-        chrome.action.setBadgeText(
-            {text: lang1, tabId: details.tabId},
-          )
-        console.log(lang1)
+    if (details.parentFrameId != -1) { return }
+
+    var matched = false;
+    lang1.forEach((l, ind) => {
+        if (matched) { return }
+        if (is_match(l, details)) {
+            chrome.action.setBadgeText(
+                { text: l, tabId: details.tabId },
+            );
+            matched = true;
+
+        }
     }
-    else if (is_match(lang2, details)){
+    )
+    lang2.forEach((l, ind) => {
+        if (matched) { return }
+        if (is_match(l, details)) {
+            chrome.action.setBadgeText(
+                { text: l, tabId: details.tabId },
+            )
+            matched = true;
+        }
+    }
+    )
+    if (!matched) {
         chrome.action.setBadgeText(
-            {text: lang2, tabId: details.tabId},
-          )
-        console.log(lang2)
-    } else {
-        chrome.action.setBadgeText(
-            {text: "", tabId: details.tabId},
-          )
+            { text: "", tabId: details.tabId },
+        )
     }
 }
 
 
 chrome.webNavigation.onDOMContentLoaded.addListener(
-    update_extention_staus   
+    update_extention_staus
 )
