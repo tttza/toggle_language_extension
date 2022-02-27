@@ -1,0 +1,16 @@
+{
+    "name": "Language Code Toggler",
+    "manifest_version": 3,
+    "version": "0.1",
+    "description": "Toggle language code in current URL.",
+    "permissions": [
+      "activeTab",
+      "scripting",
+      "tabs"
+    ],
+    "background": {
+      "service_worker": "background.js"
+    },
+    "action": {
+     }
+  }
