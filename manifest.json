@@ -1,8 +1,8 @@
 {
-    "name": "Language Code Toggler",
+    "name": "JA/EN Url Toggler",
     "manifest_version": 3,
     "version": "0.1",
-    "description": "Toggle language code in current URL.",
+    "description": "Toggle language code (ja-JP/en-US) in current URL by one click.",
     "permissions": [
       "activeTab",
       "webNavigation"
