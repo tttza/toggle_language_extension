@@ -59,8 +59,10 @@ function update_extention_staus(details) {
             chrome.action.setBadgeText(
                 { text: l, tabId: details.tabId },
             );
+            chrome.action.setBadgeBackgroundColor(
+                { color: 'blue', tabId: details.tabId },
+            )
             matched = true;
-
         }
     }
     )
@@ -69,6 +71,9 @@ function update_extention_staus(details) {
         if (is_match(l, details)) {
             chrome.action.setBadgeText(
                 { text: l, tabId: details.tabId },
+            )
+            chrome.action.setBadgeBackgroundColor(
+                { color: 'red', tabId: details.tabId },
             )
             matched = true;
         }
@@ -82,6 +87,6 @@ function update_extention_staus(details) {
 }
 
 
-chrome.webNavigation.onDOMContentLoaded.addListener(
+chrome.webNavigation.onCommitted.addListener(
     update_extention_staus
 )

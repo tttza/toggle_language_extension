@@ -5,18 +5,21 @@
     "description": "Toggle language code in current URL.",
     "permissions": [
       "activeTab",
-      "scripting",
-      "tabs",
       "webNavigation"
     ],
     "background": {
       "service_worker": "background.js"
     },
+    "icons": {            
+      "16": "images/icon16.png", 
+      "24": "images/icon24.png", 
+      "36": "images/icon36.png"  
+    },
     "action": {
         "default_icon": {            
           "16": "images/icon16.png", 
           "24": "images/icon24.png", 
-          "32": "images/icon32.png"  
+          "36": "images/icon36.png"  
         },
         "default_title": "Toggle Language"
     }
