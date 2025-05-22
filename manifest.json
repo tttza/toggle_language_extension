@@ -1,7 +1,7 @@
 {
     "name": "JA/EN Url Toggler",
     "manifest_version": 3,
-    "version": "0.1",
+    "version": "0.2",
     "description": "Toggle language code (ja-JP/en-US) in current URL by one click.",
     "permissions": [
       "activeTab",
