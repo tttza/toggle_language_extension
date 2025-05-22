@@ -5,16 +5,16 @@ lang2 = ['en-US', 'en', 'en_US']
 function check_url_redirect(details) {
     var pattern, redirectUrl;
     
-    function redirect_if_match(query, target, details) {
+      function redirect_if_match(query, target, details) {
         try {
-            pattern = new RegExp(['([^a-zA-Z0-9_])', query, '([^a-zA-Z0-9_])'].join(''), 'i');
+            pattern = new RegExp(['([^a-zA-Z0-9_])', query, '($|[^a-zA-Z0-9_])'].join(''), 'i');
         } catch (err) {
             return false
         }
         
         match = details.url.match(pattern);
         if (match) {
-            const actualMatch = match[0].substring(1, match[0].length - 1);
+            const actualMatch = match[0].substring(1, match[0].length - (match[2] ? 1 : 0));
             let targetLang = target;
             
             if (actualMatch === actualMatch.toUpperCase()) {
@@ -39,8 +39,11 @@ function check_url_redirect(details) {
                     }
                 }
             }
-            
-            redirectUrl = details.url.replace(match[0], match[0][0] + targetLang + match[0][match[0].length - 1]);
+            if (match[2] === "") {
+                redirectUrl = details.url.replace(match[0], match[1] + targetLang);
+            } else {
+                redirectUrl = details.url.replace(match[0], match[1] + targetLang + match[2]);
+            }
             if (redirectUrl != details.url) {
                 chrome.tabs.update(details.id, { url: redirectUrl });
                 return true
@@ -74,10 +77,9 @@ function check_url_redirect(details) {
 
 chrome.action.onClicked.addListener(check_url_redirect);
 
-function update_extention_staus(details) {
-    function is_match(query, details) {
+function update_extention_staus(details) {    function is_match(query, details) {
         try {
-            pattern = new RegExp(['([^a-zA-Z0-9_])', query, '([^a-zA-Z0-9_])'].join(''), 'i');
+            pattern = new RegExp(['([^a-zA-Z0-9_])', query, '([^a-zA-Z0-9_]|$)'].join(''), 'i');
         } catch (err) {
             return false
         }
